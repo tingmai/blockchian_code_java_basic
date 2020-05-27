@@ -1,0 +1,128 @@
+
+import java.util.*;
+
+class Block{
+    private int prevHash;
+    private String data;
+    private int hash;
+    
+    public void setPrevHash(int prevHash)
+    {
+        this.prevHash=prevHash;
+    }
+    
+    public int getPrevHash()
+    {
+        return this.prevHash;
+    }
+    
+     public void setData(String data)
+    {
+        this.data=data;
+    }
+    
+    public String getData()
+    {
+        return this.data;
+    }
+    
+     public void setHash(int hash)
+    {
+        this.hash=hash;
+    }
+    
+    public int getHash()
+    {
+        return this.hash;
+    }
+    
+    public Block(String data,int prevHash)
+    {
+        this.prevHash=prevHash;
+        this.data=data;
+        this.hash=Arrays.hashCode(new Integer[]{data.hashCode(),prevHash});
+    }
+    
+    public String toString()
+    {
+        return "\n---------------\nBlock [prevHash = "+prevHash+"] \n [ data ="+data+"] \n [nextHash ="+hash+"]\n--------------\n";
+    }
+    
+    
+    
+}
+public class Main
+{
+	public static void main(String[] args) {
+	
+	   List<Block> blockChainList=new ArrayList<>();
+	   Block genesis_block=new Block("Base Block",0);
+	   blockChainList.add(genesis_block);
+	   Block block1=new Block("Block1",blockChainList.get(blockChainList.size()-1).getHash());
+	   blockChainList.add(block1);
+	   Block block2=new Block("Block2",blockChainList.get(blockChainList.size()-1).getHash());
+	   blockChainList.add(block2);
+	   Block block3=new Block("Block3",blockChainList.get(blockChainList.size()-1).getHash());
+	   blockChainList.add(block3);
+	   
+	   System.out.println("--------------------------");
+	   System.out.println("-------Blcokchain----------");
+	   blockChainList.forEach(System.out::println);
+	   System.out.println("--------------------------");
+	   
+	   System.out.println("Is Valid :"+validate(blockChainList));
+	   System.out.println("--------------------------");
+	   
+	   Block newBlock=new Block("newBlock",genesis_block.getHash());
+	   blockChainList.add(newBlock);
+	   int index=blockChainList.indexOf(block1);
+	   blockChainList.remove(index);
+	   blockChainList.add(index,newBlock);
+	   
+	   System.out.println("---------trying to replace block1 with new block------------");
+	   System.out.println("------------Blockchain---------------");
+	   System.out.println("--------------------------");
+	   
+	   blockChainList.forEach(System.out::println);
+	   System.out.println("--------------------------");
+	   System.out.println("Is Valid :"+validate(blockChainList));
+	   System.out.println("--------------------------");
+	  
+	     
+	   
+	   
+	
+	
+	}
+	
+	
+	public static boolean validate(List<Block> blockChainList)
+	{
+	    boolean res=true;
+	    
+	    Block lastBlock=null;
+	    
+	    for(int i=blockChainList.size()-1;i>=0;i--)
+	    {
+	        
+	        if(lastBlock==null)
+	        {
+	            lastBlock=blockChainList.get(i);
+	        }
+	        else{
+	            
+	            Block currentBlock=blockChainList.get(i);
+	            if(lastBlock.getPrevHash() != currentBlock.getHash())
+	            {
+	                res=false;
+	                break;
+	            }
+	            
+	            lastBlock=currentBlock;
+	        }
+	        
+	    }
+	        return res;
+	    }
+	
+}
